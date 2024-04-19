@@ -297,6 +297,8 @@ class MyConsole(cmd.Cmd):
                 self.generate_text(int(args[1]), args[3])
             else:
                 self.generate_text(int(args[1]))
+        elif ">" in args:
+            self.input_text_manually(args[0], args[2])
         else:
             self.input_text_manually(args[0])
 
@@ -385,14 +387,17 @@ class MyConsole(cmd.Cmd):
             folder = "statistics_folder"
         elif "-a" in args:
             file_path = os.path.join(self.text_folder, args[1])
-            os.remove(file_path)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"File {args[1]} has been deleted from {self.text_folder}.")
             file_path = os.path.join(self.modified_text_folder, args[1][:-4] + "_modified.txt")
-            os.remove(file_path)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"File {args[1][:-4]}_modified.txt has been deleted from {self.modified_text_folder}.")
             file_path = os.path.join(self.statistics_folder, args[1][:-4] + "_stats.txt")
-            os.remove(file_path)
-            print(f"File {args[1]} has been deleted from {self.text_folder}.")
-            print(f"File {args[1][:-4]}_modified.txt has been deleted from {self.modified_text_folder}.")
-            print(f"File {args[1][:-4]}_stats.txt has been deleted from {self.statistics_folder}.")
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"File {args[1][:-4]}_stats.txt has been deleted from {self.statistics_folder}.")
             return
         else:
             file_path = os.path.join(self.text_folder, args[0])
@@ -421,32 +426,40 @@ class MyConsole(cmd.Cmd):
                 self.show_array("text.txt")
 
     def show_list(self, file_name="text.txt"):
-        dll = process_text_doubly_linked_list(self.read_text(file_name))
-        tracemalloc.start()
-        start_time = time.time()
-        modified_text = doubly_linked_list(dll)
-        end_time = time.time()
-        current, peak = tracemalloc.get_traced_memory()
-        tracemalloc.stop()
-        self.save_statistics("doubly_linked_list", end_time - start_time, (peak - current) / 1024, file_name)
+        modified_text_file_path = os.path.join(self.modified_text_folder,
+                                               os.path.splitext(file_name)[0] + "_modified.txt")
+        if os.path.exists(modified_text_file_path):
+            dll = process_text_doubly_linked_list(self.read_text(file_name))
+            tracemalloc.start()
+            start_time = time.time()
+            modified_text = doubly_linked_list(dll)
+            end_time = time.time()
+            current, peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
+            self.save_statistics("doubly_linked_list", end_time - start_time, (peak - current) / 1024, file_name)
 
-        modified_text_file_path = os.path.join(self.modified_text_folder, os.path.splitext(file_name)[0] + "_modified.txt")
-        with open(modified_text_file_path, "w") as modified_file:
-            modified_file.write(modified_text)
+            with open(modified_text_file_path, "w") as modified_file:
+                modified_file.write(modified_text)
+        else:
+            print("File does not exist")
 
     def show_array(self, file_name="text.txt"):
-        array = process_text_dynamic_array(self.read_text(file_name))
-        tracemalloc.start()
-        start_time = time.time()
-        modified_text = dynamic_array(array)
-        end_time = time.time()
-        current, peak = tracemalloc.get_traced_memory()
-        tracemalloc.stop()
-        self.save_statistics("dynamic_array", end_time - start_time, (peak - current) / 1024, file_name)
+        modified_text_file_path = os.path.join(self.modified_text_folder,
+                                               os.path.splitext(file_name)[0] + "_modified.txt")
+        if os.path.exists(modified_text_file_path):
+            array = process_text_dynamic_array(self.read_text(file_name))
+            tracemalloc.start()
+            start_time = time.time()
+            modified_text = dynamic_array(array)
+            end_time = time.time()
+            current, peak = tracemalloc.get_traced_memory()
+            tracemalloc.stop()
+            self.save_statistics("dynamic_array", end_time - start_time, (peak - current) / 1024, file_name)
 
-        modified_text_file_path = os.path.join(self.modified_text_folder, os.path.splitext(file_name)[0] + "_modified.txt")
-        with open(modified_text_file_path, "w") as modified_file:
-            modified_file.write(modified_text)
+            with open(modified_text_file_path, "w") as modified_file:
+                modified_file.write(modified_text)
+        else:
+            print("File does not exist")
 
     def do_stats(self, arg):
         """Show statistics."""
