@@ -600,14 +600,14 @@ def doubly_linked_list(dll):
 
     # Removing spaces
     dll.set_head()
-    while dll.get_current().Item == ' ':
+    while dll.get_current() and dll.get_current().Item == ' ':
         dll.delete(dll.get_current())
     while not dll.is_last():
         if dll.get_current().Item == ' ':
             while dll.get_next() and dll.get_next().Item == ' ':
                 dll.delete(dll.get_next())
         dll.next()
-    while dll.get_current().Item == ' ':
+    while dll.get_current() and dll.get_current().Item == ' ':
         dll.delete(dll.get_current())
 
     return dll.to_string()
@@ -709,4 +709,5 @@ if __name__ == "__main__":
     console = MyConsole()
     console.prompt = "> "
     console.cmdloop("\nWelcome to the console application!\n"
-                    "The application processes the text, keeping only words with an even number of letters without the letter 'o' and doubling the last letter.\n")
+                    "The application processes the text, keeping only words with an even number of letters without "
+                    "the letter 'o' and doubling the last letter.\n")
