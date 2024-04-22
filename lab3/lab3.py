@@ -426,9 +426,9 @@ class MyConsole(cmd.Cmd):
                 self.show_array("text.txt")
 
     def show_list(self, file_name="text.txt"):
-        modified_text_file_path = os.path.join(self.modified_text_folder,
-                                               os.path.splitext(file_name)[0] + "_modified.txt")
-        if os.path.exists(modified_text_file_path):
+        text_file_path = os.path.join(self.text_folder,
+                                               os.path.splitext(file_name)[0] + ".txt")
+        if os.path.exists(text_file_path):
             dll = process_text_doubly_linked_list(self.read_text(file_name))
             tracemalloc.start()
             start_time = time.time()
@@ -438,15 +438,17 @@ class MyConsole(cmd.Cmd):
             tracemalloc.stop()
             self.save_statistics("doubly_linked_list", end_time - start_time, (peak - current) / 1024, file_name)
 
+            modified_text_file_path = os.path.join(self.modified_text_folder,
+                                                   os.path.splitext(file_name)[0] + "_modified.txt")
             with open(modified_text_file_path, "w") as modified_file:
                 modified_file.write(modified_text)
         else:
             print("File does not exist")
 
     def show_array(self, file_name="text.txt"):
-        modified_text_file_path = os.path.join(self.modified_text_folder,
-                                               os.path.splitext(file_name)[0] + "_modified.txt")
-        if os.path.exists(modified_text_file_path):
+        text_file_path = os.path.join(self.text_folder,
+                                      os.path.splitext(file_name)[0] + ".txt")
+        if os.path.exists(text_file_path):
             array = process_text_dynamic_array(self.read_text(file_name))
             tracemalloc.start()
             start_time = time.time()
@@ -456,6 +458,8 @@ class MyConsole(cmd.Cmd):
             tracemalloc.stop()
             self.save_statistics("dynamic_array", end_time - start_time, (peak - current) / 1024, file_name)
 
+            modified_text_file_path = os.path.join(self.modified_text_folder,
+                                                   os.path.splitext(file_name)[0] + "_modified.txt")
             with open(modified_text_file_path, "w") as modified_file:
                 modified_file.write(modified_text)
         else:
